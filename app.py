@@ -36,12 +36,13 @@ import numpy as np
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_face_mesh = mp.solutions.face_mesh
-face_mesh= mp_face_mesh.FaceMesh(max_num_faces=1,
-min_detection_confidence=0.5,
-min_tracking_confidence=0.5)
 
 
-def face_point(image):
+
+def face_point(image,minDetectionCon,minTrackingCon):
+    face_mesh= mp_face_mesh.FaceMesh(max_num_faces=1,
+    min_detection_confidence=minDetectionCon,
+    min_tracking_confidence=minTrackingCon)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     results = face_mesh.process(image)
     faces=[]
@@ -216,7 +217,10 @@ def mask_overlay(image, faces,mask_up,mask_down):
 
 
 
-def main(mask_up,mask_down,flip_the_video):
+def main(detectionConfidence,trackingConfidence,mask_up,mask_down,flip_the_video):
+    minDetectionCon=float(detectionConfidence / 100)
+    minTrackingCon=float(trackingConfidence / 100)
+    
     global folder_path
     global input_file_path
     FRAME_WINDOW = st.image([])
@@ -252,7 +256,7 @@ def main(mask_up,mask_down,flip_the_video):
             pass
         
         try:
-            faces = face_point(img)
+            faces = face_point(img,minDetectionCon,minTrackingCon)
             
             if len(faces) >= 1:
                 img =mask_overlay(img, faces,mask_up,mask_down)
@@ -281,12 +285,14 @@ def main(mask_up,mask_down,flip_the_video):
 
 
 if __name__ == "__main__":
+    detectionConfidence = st.slider("Face Detection Confidence")
+    trackingConfidence = st.slider("Face Tracking Confidence")
     mask_up = st.slider("Make mask bigger upper size")
     mask_down = st.slider("Make mask bigger lower size")
     flip_the_video = st.selectbox("Horizontally flip video ",("Yes","No"))
     if st.button("Start adding face mask"):
         if flag:
-            main(mask_up,mask_down,flip_the_video)
+            main(detectionConfidence,trackingConfidence,mask_up,mask_down,flip_the_video)
             st.markdown(f"## Face mask added successfully check your export folder")
 
             for i in os.listdir("./temp/"):
