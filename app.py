@@ -6,7 +6,7 @@ import numpy as np
 import os
 from os import path
 
-st.title("Face blur")
+st.title("Face Mask")
 try:
     os.mkdir("temp")
 except:
@@ -281,10 +281,10 @@ def main(mask_up,mask_down,flip_the_video):
 
 
 if __name__ == "__main__":
-    mask_up = st.slider("make mask bigger upper size")
-    mask_down = st.slider("make mask bigger lower size")
+    mask_up = st.slider("Make mask bigger upper size")
+    mask_down = st.slider("Make mask bigger lower size")
     flip_the_video = st.selectbox("Horizontally flip video ",("Yes","No"))
-    if st.button("Start Face Blur"):
+    if st.button("Start adding face mask"):
         if flag:
             main(mask_up,mask_down,flip_the_video)
             st.markdown(f"## Face mask added successfully check your export folder")
